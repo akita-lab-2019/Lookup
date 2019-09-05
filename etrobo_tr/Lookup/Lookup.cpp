@@ -96,7 +96,6 @@ void Lookup::run()
 
     // 低い姿勢で後進
     case 4:
-        m_guage->setCourse(GuageManager::R);
         m_tail->setAngle(68);
         m_tail->setMaxSpeed(40);
         lineRun(0, -13, 1, 5);
@@ -110,7 +109,6 @@ void Lookup::run()
 
     // 低い姿勢で前進
     case 5:
-        m_guage->setCourse(GuageManager::L);
         m_tail->setAngle(70);
         m_tail->setMaxSpeed(40);
         lineRun(0, 8, 1, 5);
@@ -124,7 +122,6 @@ void Lookup::run()
 
     // 低い姿勢で後進
     case 6:
-        m_guage->setCourse(GuageManager::R);
         m_tail->setAngle(68);
         m_tail->setMaxSpeed(40);
         lineRun(0, -13, 1, 5);
@@ -138,7 +135,6 @@ void Lookup::run()
 
     // 低い姿勢で前進
     case 7:
-        m_guage->setCourse(GuageManager::L);
         m_tail->setAngle(70);
         m_tail->setMaxSpeed(40);
         lineRun(0, 8, 1, 5);

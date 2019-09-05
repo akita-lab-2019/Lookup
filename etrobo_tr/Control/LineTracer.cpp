@@ -94,6 +94,11 @@ void LineTracer::run()
         m_turn *= -1;
     }
 
+    if (m_forward < 0)
+    {
+        m_turn *= -1;
+    }
+
     // 倒立走行と尻尾走行を振り分ける
     if (m_is_inverted)
     {
