@@ -224,7 +224,7 @@ void tracer_task(intptr_t exinf)
     if (is_goal == false)
     {
         // 未完走
-        g_tail_controller->setAngle(75);
+        g_tail_controller->setAngle(70);
         g_tail_controller->setMaxSpeed(40);
 
         is_goal = g_section_tracer->run();

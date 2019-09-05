@@ -37,123 +37,123 @@ void Lookup::update()
 /**
  * 走行を行う
  */
+
 void Lookup::run()
 {
+    int fwd;
     switch (m_sequence_num)
     {
+    // ゴール通知
     case 0:
-
-        // 尻尾をつく
-        ev3_speaker_play_tone(262, 100);
-        landing();
-
-        ev3_speaker_play_tone(262, 100);
-        m_clock.sleep(1000);
-
-        ev3_speaker_play_tone(262, 100);
-        upBody();
-
-        m_clock.sleep(1000);
-
+        ev3_speaker_play_tone(262, 500);
         m_sequence_num++;
         break;
 
+    // ゲート検知まで減速
     case 1:
-        // 高姿勢で前進
-        lineRun(15, 0, 15);
+        // ゴールゲートから遠ざかるほど前進量を下げる
+        fwd = 100 - 100 * (m_guage->getRobotDis() - 9.25);
 
-        if (m_guage->getSonarDistance() < 0.05)
+        // 前進量の下限は70
+        if (fwd < 70)
+            fwd = 70;
+
+        lineRun(1, fwd, 0, 35);
+
+        // ゲートを検知
+        if (m_guage->getSonarDistance() < 0.1)
         {
-            m_clock.sleep(10);
-            if (m_guage->getSonarDistance() < 0.05)
-            {
-                m_sequence_num++;
-            }
+            m_sequence_num++;
         }
         break;
 
+    // 着地
     case 2:
-        // 倒す
-        ev3_speaker_play_tone(262, 100);
-        downBody();
-
-        m_wheel_R.reset();
+        m_tail->setAngle(70);
+        m_tail->setMaxSpeed(40);
+        m_wheel_L.setPWM(90);
+        m_wheel_R.setPWM(90);
+        m_clock.sleep(150);
+        m_landing_dis = m_guage->getRobotDis();
         m_wheel_L.reset();
-        m_clock.sleep(1000);
-        ev3_speaker_play_tone(262, 100);
+        m_wheel_R.reset();
+        m_clock.sleep(10);
         m_sequence_num++;
+        break;
 
+    // 低い姿勢で前進
     case 3:
-        // 低い姿勢で前進
-        lineRun(15, 1, 5);
+        m_tail->setAngle(70);
+        m_tail->setMaxSpeed(40);
+        lineRun(0, 8, 1, 5);
 
-        if (m_guage->getRobotDis() > 0.15)
+        if (m_guage->getRobotDis() > 0.25)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
         }
         break;
 
+    // 低い姿勢で後進
     case 4:
-        // 低い姿勢で前進
-        lineRun(-15, 1, 5);
+        m_guage->setCourse(GuageManager::R);
+        m_tail->setAngle(68);
+        m_tail->setMaxSpeed(40);
+        lineRun(0, -13, 1, 5);
 
-        if (m_guage->getRobotDis() < -0.2)
+        if (m_guage->getRobotDis() < -0.10)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
         }
         break;
 
+    // 低い姿勢で前進
     case 5:
-        // 低い姿勢で前進
-        lineRun(15, 1, 5);
+        m_guage->setCourse(GuageManager::L);
+        m_tail->setAngle(70);
+        m_tail->setMaxSpeed(40);
+        lineRun(0, 8, 1, 5);
 
-        if (m_guage->getRobotDis() > 0.15)
+        if (m_guage->getRobotDis() > 0.25)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
         }
         break;
 
+    // 低い姿勢で後進
     case 6:
-        // 低い姿勢で前進
-        lineRun(-15, 1, 5);
+        m_guage->setCourse(GuageManager::R);
+        m_tail->setAngle(68);
+        m_tail->setMaxSpeed(40);
+        lineRun(0, -13, 1, 5);
 
-        if (m_guage->getRobotDis() < -0.2)
+        if (m_guage->getRobotDis() < -0.10)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
         }
         break;
 
+    // 低い姿勢で前進
     case 7:
-        // 低い姿勢で前進
-        lineRun(15, 1, 5);
+        m_guage->setCourse(GuageManager::L);
+        m_tail->setAngle(70);
+        m_tail->setMaxSpeed(40);
+        lineRun(0, 8, 1, 5);
 
-        if (m_guage->getRobotDis() > 0.15)
+        if (m_guage->getRobotDis() > 0.25 + 0.82)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
         }
         break;
 
+    // 停止
     case 8:
-        // 高姿勢で前進
-        lineRun(15, 0, 15);
-
-        if (m_guage->getRobotDis() > 0.45)
-        {
-            ev3_speaker_play_tone(262, 100);
-            m_wheel_R.reset();
-            m_wheel_L.reset();
-            m_sequence_num++;
-        }
-        break;
-
-    case 9:
-        m_wheel_R.reset();
         m_wheel_L.reset();
+        m_wheel_R.reset();
         break;
 
     default:
@@ -177,29 +177,16 @@ void Lookup::downBody()
  * ライントレースする
  *
  */
-void Lookup::lineRun(int forward, int pid_index, int target)
+void Lookup::lineRun(bool is_inverted, int forward, int pid_index, int target)
 {
-    m_line_tracer->setIsInverted(false);
+    m_line_tracer->setIsInverted(is_inverted);
     m_line_tracer->setForward(forward);
     m_line_tracer->setCurvature(0);
-    m_line_tracer->setPidParm(m_run_pid_param[pid_index]);
+    // m_line_tracer->setPidParm(m_run_pid_param[pid_index]);
     m_line_tracer->setColorTarget(target);
     m_line_tracer->run();
 }
 
 void Lookup::landing()
 {
-    m_tail->setAngle(75);
-    m_tail->setMaxSpeed(40);
-    m_wheel_L.setPWM(90);
-    m_wheel_R.setPWM(90);
-    m_clock.sleep(150);
-
-    m_wheel_R.reset();
-    m_wheel_L.reset();
-
-    // g_wheel_L.setPWM(0);
-    // g_wheel_R.setPWM(0);
-    // g_wheel_L.setBrake(true);
-    // g_wheel_R.setBrake(true);
 }

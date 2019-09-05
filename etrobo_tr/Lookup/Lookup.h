@@ -37,7 +37,7 @@ private:
     TailController *m_tail;
 
     void update();
-    void lineRun(int forward, int pid_index, int target);
+    void lineRun(bool is_inverted, int forward, int pid_index, int target);
     void downBody();
     void upBody();
     void landing();
@@ -45,8 +45,12 @@ private:
     // 現在のシーソーシーケンス番号
     int m_sequence_num = 0;
 
+    // 着地した時の走行距離
+    float m_landing_dis = 0;
+
     // 走行のPIDパラメータ
-    float m_run_pid_param[2][3] = {{0.3, 0.0, 0.0}, {0.5, 0.0, 0.0}};
+    float m_run_pid_param[2][3] = {{0.400, 0.000, 0.031},
+                                   {0.5, 0.0, 0.0}};
 };
 
 #endif
