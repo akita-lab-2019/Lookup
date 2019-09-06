@@ -69,7 +69,7 @@ void Lookup::run()
 
     // 着地
     case 2:
-        m_tail->setAngle(70);
+        m_tail->setAngle(67);
         m_tail->setMaxSpeed(40);
         m_wheel_L.setPWM(90);
         m_wheel_R.setPWM(90);
@@ -83,7 +83,7 @@ void Lookup::run()
 
     // 低い姿勢で前進
     case 3:
-        m_tail->setAngle(70);
+        m_tail->setAngle(67);
         m_tail->setMaxSpeed(40);
         lineRun(0, 8, 1, 5);
 
@@ -91,25 +91,27 @@ void Lookup::run()
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
+            m_clock.sleep(250);
         }
         break;
 
     // 低い姿勢で後進
     case 4:
-        m_tail->setAngle(68);
+        m_tail->setAngle(67);
         m_tail->setMaxSpeed(40);
-        lineRun(0, -13, 1, 5);
+        lineRun(0, -9, 1, 5);
 
         if (m_guage->getRobotDis() < -0.10)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
+            m_clock.sleep(250);
         }
         break;
 
     // 低い姿勢で前進
     case 5:
-        m_tail->setAngle(70);
+        m_tail->setAngle(67);
         m_tail->setMaxSpeed(40);
         lineRun(0, 8, 1, 5);
 
@@ -117,25 +119,27 @@ void Lookup::run()
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
+            m_clock.sleep(250);
         }
         break;
 
     // 低い姿勢で後進
     case 6:
-        m_tail->setAngle(68);
+        m_tail->setAngle(67);
         m_tail->setMaxSpeed(40);
-        lineRun(0, -13, 1, 5);
+        lineRun(0, -9, 1, 5);
 
         if (m_guage->getRobotDis() < -0.10)
         {
             ev3_speaker_play_tone(262, 100);
             m_sequence_num++;
+            m_clock.sleep(250);
         }
         break;
 
     // 低い姿勢で前進
     case 7:
-        m_tail->setAngle(70);
+        m_tail->setAngle(67);
         m_tail->setMaxSpeed(40);
         lineRun(0, 8, 1, 5);
 
@@ -143,6 +147,7 @@ void Lookup::run()
         {
             ev3_speaker_play_tone(262, 300);
             m_sequence_num++;
+            m_clock.sleep(250);
         }
         break;
 
@@ -151,18 +156,18 @@ void Lookup::run()
         m_wheel_L.setPWM(-50);
         m_wheel_R.setPWM(-50);
         m_tail->setAngle(1000);
-        m_tail->setMaxSpeed(100);
-        m_clock.sleep(5000);
-        m_sequence_num++;
-        break;
-
-    // 高い姿勢で前進
-    case 9:
+        m_tail->setMaxSpeed(61);
+        m_clock.sleep(155);
         m_tail->setAngle(85);
         m_tail->setMaxSpeed(90);
-        lineRun(0, 8, 1, 25);
+        m_sequence_num++;
+        break;
+    // 高い姿勢で前進
+    case 9:
 
-        if (m_guage->getRobotDis() > 0.5)
+        lineRun(0, 8, 1, 15);
+
+        if (m_guage->getRobotDis() > 0.90)
         {
             ev3_speaker_play_tone(262, 1000);
             m_sequence_num++;
