@@ -16,6 +16,7 @@ public:
     void init();
     void setAngle(int target_angle);
     void setMaxSpeed(int max_speed);
+    void setTailSpeed(int tail_speed);
     void control();
 
 private:

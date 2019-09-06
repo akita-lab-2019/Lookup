@@ -52,7 +52,7 @@ void Lookup::run()
     // ゲート検知まで減速
     case 1:
         // ゴールゲートから遠ざかるほど前進量を下げる
-        fwd = 100 - 100 * (m_guage->getRobotDis() - 9.25);
+        fwd = 100 - 100 * (m_guage->getRobotDis() - 0.37);
 
         // 前進量の下限は70
         if (fwd < 70)
@@ -139,15 +139,38 @@ void Lookup::run()
         m_tail->setMaxSpeed(40);
         lineRun(0, 8, 1, 5);
 
-        if (m_guage->getRobotDis() > 0.25 + 0.82)
+        if (m_guage->getRobotDis() > 0.25)
         {
-            ev3_speaker_play_tone(262, 100);
+            ev3_speaker_play_tone(262, 300);
+            m_sequence_num++;
+        }
+        break;
+
+    // 姿勢を上げる
+    case 8:
+        m_wheel_L.setPWM(-50);
+        m_wheel_R.setPWM(-50);
+        m_tail->setAngle(1000);
+        m_tail->setMaxSpeed(100);
+        m_clock.sleep(5000);
+        m_sequence_num++;
+        break;
+
+    // 高い姿勢で前進
+    case 9:
+        m_tail->setAngle(85);
+        m_tail->setMaxSpeed(90);
+        lineRun(0, 8, 1, 25);
+
+        if (m_guage->getRobotDis() > 0.5)
+        {
+            ev3_speaker_play_tone(262, 1000);
             m_sequence_num++;
         }
         break;
 
     // 停止
-    case 8:
+    case 10:
         m_wheel_L.reset();
         m_wheel_R.reset();
         break;

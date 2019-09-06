@@ -15,7 +15,7 @@ TailController::TailController(ev3api::Motor &tail_motor, PID *pid)
 void TailController::init()
 {
     m_tail_motor.reset();
-    float tail_pid_gain[3] = {2.5, 0.0, 0.6};
+    float tail_pid_gain[3] = {2.3, 0.0, 0.6};
     m_pid->init(tail_pid_gain);
 }
 
@@ -35,6 +35,15 @@ void TailController::setAngle(int target_angle)
 void TailController::setMaxSpeed(int max_speed)
 {
     m_max_speed = max_speed;
+}
+
+/**
+ * 尻尾モータの最高速度を設定する
+ * @param target_angle 尻尾の最高速度
+ */
+void TailController::setTailSpeed(int tail_speed)
+{
+    m_tail_motor.setPWM(tail_speed);
 }
 
 /**
